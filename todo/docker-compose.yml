@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: todo
+    ports:
+      - "3307:3306"
+      
+  todonginx2:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    environment:
+      - DB_HOST=mysql
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_DATABASE=todo
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge

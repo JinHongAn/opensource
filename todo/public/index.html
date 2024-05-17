@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>To-do list!</title>
+<style>
+html { color-scheme: light dark; }
+body { width: 35em; margin: 0 auto;
+font-family: Tahoma, Verdana, Arial, sans-serif; }
+</style>
+</head>
+<body>
+<h1>You can add your to-do list!</h1>
+
+<form id="todo-form">
+  <input type="text" id="todo-input" placeholder="Enter your to-do item" required>
+  <button type="submit">Add</button>
+</form>
+
+<ul id="todo-list"></ul>
+
+<script>
+  document.getElementById('todo-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    const todoInput = document.getElementById('todo-input');
+    const todoItem = todoInput.value;
+
+    if (todoItem) {
+      await fetch('/api/todos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item: todoItem })
+      });
+      todoInput.value = '';
+      loadTodos();
+    }
+  });
+
+  async function loadTodos() {
+    const response = await fetch('/api/todos');
+    const todos = await response.json();
+    const todoList = document.getElementById('todo-list');
+    todoList.innerHTML = '';
+    todos.forEach(todo => {
+      const li = document.createElement('li');
+      li.textContent = todo.item;
+      todoList.appendChild(li);
+    });
+  }
+
+  loadTodos();
+</script>
+
+</body>
+</html>
